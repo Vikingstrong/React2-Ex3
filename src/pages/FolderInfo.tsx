@@ -5,6 +5,7 @@ import { contactsAtom, getContactsAtom, getFolderByIdAtom, selectedFolderAtom } 
 import { useEffect, useState } from "react";
 import { Folder, UserPlus, Users } from "lucide-react";
 import CreateContactMenu from '../ components/widget/СreateContactMenu'
+import type { Ifolder } from "./Folders";
 
 export interface Icontact{
   id:string,
@@ -20,7 +21,7 @@ export interface Icontact{
 
 export default function FolderInfo() {
   const { id } = useParams();
-  const mainFolder = useAtomValue(selectedFolderAtom);
+  const mainFolder = useAtomValue(selectedFolderAtom) as Ifolder | {};
   const [, getFolder] = useAtom(getFolderByIdAtom);
 
   const contacts = useAtomValue(contactsAtom)
@@ -39,9 +40,9 @@ export default function FolderInfo() {
 
   
   const [open, setOpen] = useState(false)
-  const handleClose = () => {
-    setOpen(false)
-  }
+  const handleClose = (value?: boolean) => {
+    setOpen(value ?? false);
+  };
   return (
     <div className="max-w-300 m-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
       <div className="flex justify-between">
@@ -89,7 +90,7 @@ export default function FolderInfo() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {
               contacts.map((contact:Icontact) => (
-                <NavLink to={``} key={contact.id}>
+                <NavLink to={`/folders/${id}/contacts/${contact.id}`} key={contact.id}>
                   <div className="flex flex-col w-full lg:flex-row text-center lg:text-start text-gray-200 lg:w-90 lg:h-20 items-center gap-5 p-5 rounded-lg border border-blue-900 bg-slate-900/50 transition-all group hover:bg-slate-800/50 cursor-pointer">
                     <UserPlus/>
                     <div className="flex flex-col ">
@@ -104,7 +105,7 @@ export default function FolderInfo() {
         }
       </section>
 
-      <CreateContactMenu open={open} handleClose={() => handleClose(false)} folderId={id} >
+      <CreateContactMenu open={open} handleClose={() => handleClose(false)} folderId={id || ''} >
 
       </CreateContactMenu>
     </div>

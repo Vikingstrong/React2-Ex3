@@ -1,16 +1,17 @@
 import axios from "axios";
 import { atom } from "jotai";
 import type { IContactForm } from "../ components/widget/СreateContactMenu";
+import { Ifolder } from "../pages/Folders";
 
 const folderApi = 'http://localhost:4000/api/folders'
 const contactsApi = 'http://localhost:4000/api/contacts'
 
 
 export const foldersAtom = atom([])
-export const selectedFolderAtom = atom({})
+export const selectedFolderAtom = atom<Ifolder | {}>({})
 
 export const contactsAtom = atom([])
-
+export const selectedContactAtom = atom({})
 
 export const getFoldersAtom = atom(null, async(get,set) => {
     const token = localStorage.getItem('token')
@@ -92,5 +93,30 @@ export const createContactAtom = atom(null, async(get,set,contact:IContactForm) 
         set(getContactsAtom, contact.folder_id)
     } catch (error) {
         console.error(error)   
+    }
+})
+export const getContactByIdAtom = atom(null, async (get, set, id: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        const resp = await axios.get(`${contactsApi}/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        set(selectedContactAtom, resp.data);
+    } catch (error) {
+        console.error(error);
+    }
+});
+export const delContactAtom = atom(null, async(get,set,id:string) => {
+    const token = localStorage.getItem('token');
+    try {
+        await axios.delete(`${contactsApi}/${id}`, {
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        })
+    } catch (error) {
+        console.error(error)
     }
 })

@@ -1,16 +1,16 @@
-import { Button, Dialog, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, TextField } from "@mui/material";
 import { useAtom } from "jotai";
 import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { createContactAtom } from "../../store/foldersAtom";
-import { useEffect } from "react";
 
 
 
-interface Iprops{
-    open:boolean
-    handleClose: () => void
-    folderId: string
+
+interface Iprops {
+    open: boolean;
+    handleClose: (value?: boolean) => void;
+    folderId: string;
 }
 export interface IContactForm{
     name: string;

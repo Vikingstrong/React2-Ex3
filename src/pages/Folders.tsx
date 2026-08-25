@@ -6,10 +6,9 @@ import { Button, Menu } from "@mui/material"
 import { EllipsisVertical, Folder, Info, Pencil, Plus, Trash2 } from "lucide-react"
 import React, { useEffect, useState } from "react"
 import CreateFolderMenu from "../ components/widget/CreateFolderMenu"
-import { fetchUserAtom } from "../store/userAtom"
 
 
-interface Ifolder{
+export interface Ifolder{
     id: string,
     user_id: string,
     name: string,
