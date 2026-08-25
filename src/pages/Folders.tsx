@@ -33,17 +33,17 @@ export default function Folders() {
     const [openCreate, setOpenCreate] = useState(false)
 
 
-    const [anchorEl, setAnchorEl] = useState(null)
-    const [selectedFolder, setSelectedFolder] = useState({})
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [selectedFolder, setSelectedFolder] = useState<Ifolder | null>(null);
 
     const open = Boolean(anchorEl)
-    const handleOpen = (e: React.MouseEvent<HTMLButtonElement>, folder:Ifolder) => {
-        setAnchorEl(e.currentTarget)
-        setSelectedFolder(folder)
-    }
+    const handleOpen = (e: React.MouseEvent<HTMLElement>, folder: Ifolder) => {
+      setAnchorEl(e.currentTarget);
+      setSelectedFolder(folder);
+    };
     const handleClose = () => {
         setAnchorEl(null)
-        setSelectedFolder({})
+        setSelectedFolder(null)
     }
 
     if(!token){
@@ -77,7 +77,7 @@ export default function Folders() {
                         {
                             folders.map((folder:Ifolder) => (
                                 <div key={folder.id} className="group overflow-hidden relative">
-                                <EllipsisVertical onClick={(e) => handleOpen(e, folder)} className="absolute z-10 cursor-pointer w-8 h-8 p-1 -right-7 top-2 group-hover:-translate-x-8 transition-all hover:bg-[#2a2b2b87] rounded-4xl" color="#ffffff" />
+                                <EllipsisVertical onClick={(e) => handleOpen(e as unknown as React.MouseEvent<HTMLElement>, folder)} className="absolute z-10 cursor-pointer w-8 h-8 p-1 -right-7 top-2 group-hover:-translate-x-8 transition-all hover:bg-[#2a2b2b87] rounded-4xl" color="#ffffff" />
                                 <NavLink to={`/folders/${folder.id}`}>
                                     <div className="flex cursor-pointer lg:w-35 gap-3 items-center flex-col p-8 rounded-lg bg-slate-900/40 border border-slate-800/80 hover:border-slate-700/80 hover:bg-slate-800/50 transition-all duration-200">
                                         <Folder 
@@ -116,7 +116,8 @@ export default function Folders() {
             >
                 <div className="flex flex-col gap-5 p-4">
                     <div onClick={() => {
-                            delFolder(selectedFolder.id)
+                        if (selectedFolder) 
+                            delFolder(selectedFolder.id);
                             handleClose()
                         }} className="flex items-center gap-3 rounded-lg p-2 text-white cursor-pointer bg-red-800 transition-all hover:bg-red-500 hover:scale-110">
                         <Trash2 />
@@ -125,7 +126,7 @@ export default function Folders() {
                         <Pencil />
                     </div>
                     <div className="flex items-center gap-3 rounded-lg p-2 text-white cursor-pointer bg-blue-800 transition-all hover:bg-blue-500 hover:scale-110">
-                        <NavLink to={`/folders/${selectedFolder.id}`}>
+                        <NavLink to={`/folders/${selectedFolder?.id}`}>
                             <Info />
                         </NavLink>
                     </div>

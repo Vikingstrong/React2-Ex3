@@ -49,7 +49,7 @@ export default function СreateContactMenu({open, handleClose, folderId}:Iprops)
         <form onSubmit={handleSubmit(submitCreate)} className="p-5 flex flex-col gap-5 w-90 lg:w-130">
             <div className="flex justify-between items-center">
                 <p className="text-lg font-medium">Создать Новый Контакт</p>
-                <X onClick={handleClose} className="hover:bg-gray-300/50 transition-all duration-200 cursor-pointer rounded-4xl p-2 w-10 h-10"/>
+                <X onClick={() => handleClose(false)} className="hover:bg-gray-300/50 transition-all duration-200 cursor-pointer rounded-4xl p-2 w-10 h-10"/>
             </div>
             <div className="flex flex-col gap-3">
                 <TextField {...register('name')} required label="Name"/>

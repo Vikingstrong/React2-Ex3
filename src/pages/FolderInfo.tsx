@@ -21,7 +21,7 @@ export interface Icontact{
 
 export default function FolderInfo() {
   const { id } = useParams();
-  const mainFolder = useAtomValue(selectedFolderAtom) as Ifolder | {};
+  const mainFolder = useAtomValue(selectedFolderAtom) as Ifolder | null;
   const [, getFolder] = useAtom(getFolderByIdAtom);
 
   const contacts = useAtomValue(contactsAtom)
@@ -36,7 +36,7 @@ export default function FolderInfo() {
 
   console.log(contacts);
 
-  const folderColor = mainFolder.color
+  const folderColor = mainFolder?.color || "#10B981";
 
   
   const [open, setOpen] = useState(false)
@@ -57,7 +57,7 @@ export default function FolderInfo() {
               />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">{mainFolder.name || "Загрузка..."}</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">{mainFolder?.name || "Загрузка..."}</h1>
             <p className="text-slate-400 text-sm mt-0.5 flex items-center gap-2">Папка контактов и долгов</p>
           </div>
         </div>

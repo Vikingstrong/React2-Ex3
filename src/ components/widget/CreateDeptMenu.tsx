@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { createDeptAtom } from "../../store/debtAtom";
+import { createDeptAtom, type Idebt } from "../../store/debtAtom";
 
 interface Iprops {
     open: boolean;
@@ -52,7 +52,7 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
             amount: Number(data.amount),
             contact_id: contactId
         };
-        await createDept(payload);
+        await createDept(payload as unknown as Idebt);
         handleClose();
         reset();
     };
@@ -75,7 +75,7 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                         <MenuItem value="RUB">RUB</MenuItem>
                     </TextField>
                     <TextField {...register('description')} label="Описание" />
-                    <TextField {...register('due_date')} type="date" label="Срок возврата" />
+                    <TextField {...register('due_date')} type="date" />
                     <Button type="submit" variant="contained" color="success" sx={{ fontWeight: '700' }}>Create</Button>
                 </div>
             </form>
