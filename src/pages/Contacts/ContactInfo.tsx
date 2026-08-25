@@ -2,16 +2,20 @@ import { useAtom, useAtomValue } from "jotai"
 import { useNavigate, useParams } from "react-router"
 import { delContactAtom, getContactByIdAtom, selectedContactAtom } from "../../store/foldersAtom"
 import { useEffect, useState } from "react"
-import { User, Phone, Mail, FileText, ArrowLeft, ArrowDownLeft, ArrowUpRight, CheckCircle2, Clock, AlertCircle } from "lucide-react"
+import { User, Phone, Mail, FileText, ArrowLeft, ArrowDownLeft, ArrowUpRight, CheckCircle2, Clock, AlertCircle, Pencil, Trash2, CreditCard } from "lucide-react"
 import type { Icontact } from "../FolderInfo"
 import { Button } from "@mui/material"
-import { deptsAtom, getDeptsAtom, type Idebt } from "../../store/debtAtom"
+import { deptsAtom, getDeptsAtom, delDeptAtom, type Idebt } from "../../store/debtAtom"
 import CreateDeptMenu from "../../ components/widget/CreateDeptMenu"
+import EditContactMenu from "../../ components/widget/EditContactMenu"
+import EditDeptMenu from "../../ components/widget/EditDeptMenu"
+import DebtPaymentsMenu from "../../ components/widget/DebtPaymentsMenu"
 
 export default function ContactInfo() {
 
-  const { contactId } = useParams<{ contactId: string }>()
+  const { contactId, folderId } = useParams<{ contactId: string, folderId:string }>()
   const navigate = useNavigate()
+  console.log(folderId)
 
   const [, getInfo] = useAtom(getContactByIdAtom)
   const info = useAtomValue(selectedContactAtom) as Icontact | null
@@ -25,6 +29,7 @@ export default function ContactInfo() {
   }
   const debts = useAtomValue(deptsAtom)
   const [,getDepts] = useAtom(getDeptsAtom)
+  const [,delDept] = useAtom(delDeptAtom)
 
   useEffect(() => {
     if (contactId) {
@@ -35,6 +40,12 @@ export default function ContactInfo() {
 
 
   const [open, setOpen] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false)
+  const [openEditDebt, setOpenEditDebt] = useState(false)
+  const [selectedDebtToEdit, setSelectedDebtToEdit] = useState<Idebt | null>(null)
+  const [openPayments, setOpenPayments] = useState(false)
+  const [selectedDebtForPayments, setSelectedDebtForPayments] = useState<Idebt | null>(null)
+
 
   if (info)
     return (
@@ -71,7 +82,7 @@ export default function ContactInfo() {
             </div>
             <div className="flex gap-3 items-center w-full md:w-auto justify-end">
               <Button onClick={() => setOpen(true)} variant="contained" color="success" sx={{ borderRadius: "10px", fontWeight: 700, textTransform: "none", px: 3, fontSize: 20 }}>Add Depts</Button>
-              <Button variant="contained" color="warning" sx={{ borderRadius: "10px", fontWeight: 700, textTransform: "none", px: 3, fontSize: 20 }}>Edit</Button>
+              <Button onClick={() => setOpenEdit(true)} variant="contained" color="warning" sx={{ borderRadius: "10px", fontWeight: 700, textTransform: "none", px: 3, fontSize: 20 }}>Edit</Button>
               <Button onClick={handleDelete} variant="contained" color="error" sx={{ borderRadius: "10px", fontWeight: 700, textTransform: "none", px: 3, fontSize: 20 }}>Delete</Button>
             </div>
           </div>
@@ -95,7 +106,7 @@ export default function ContactInfo() {
                   return (
                     <div 
                       key={debt.id} 
-                      className="flex items-center justify-between p-4 bg-slate-900/60 border border-slate-800 rounded-xl hover:border-slate-700 transition-all"
+                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-900/60 border border-slate-800 rounded-xl hover:border-slate-700 transition-all gap-4"
                     >
                       <div className="flex items-center gap-4">
                         <div className={`p-2.5 rounded-xl ${isTheyOwe ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"}`}>
@@ -110,7 +121,7 @@ export default function ContactInfo() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${
                           debt.status === "paid" 
                             ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
@@ -127,6 +138,40 @@ export default function ContactInfo() {
                         <span className={`font-extrabold text-lg ${isTheyOwe ? "text-emerald-400" : "text-rose-400"}`}>
                           {isTheyOwe ? "+" : "-"}{debt.amount} {debt.currency || "USD"}
                         </span>
+
+                        <div className="flex items-center gap-1.5 ml-2">
+                          <button
+                            onClick={() => {
+                              setSelectedDebtForPayments(debt)
+                              setOpenPayments(true)
+                            }}
+                            title="Платежи"
+                            className="p-2 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/40 cursor-pointer transition-all"
+                          >
+                            <CreditCard className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedDebtToEdit(debt)
+                              setOpenEditDebt(true)
+                            }}
+                            title="Редактировать"
+                            className="p-2 rounded-lg bg-amber-600/20 text-amber-400 hover:bg-amber-600/40 cursor-pointer transition-all"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (contactId) {
+                                delDept(debt.id, contactId)
+                              }
+                            }}
+                            title="Удалить"
+                            className="p-2 rounded-lg bg-rose-600/20 text-rose-400 hover:bg-rose-600/40 cursor-pointer transition-all"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )
@@ -138,6 +183,28 @@ export default function ContactInfo() {
         </section>
 
         <CreateDeptMenu open={open} handleClose={() => setOpen(false)} contactId={contactId || ''}/>
+
+        <EditContactMenu folderId={folderId} open={openEdit} handleClose={() => setOpenEdit(false)} contact={info}/>
+
+        <EditDeptMenu 
+          open={openEditDebt} 
+          handleClose={() => {
+            setOpenEditDebt(false)
+            setSelectedDebtToEdit(null)
+          }} 
+          debt={selectedDebtToEdit} 
+          contactId={contactId || ''} 
+        />
+
+        <DebtPaymentsMenu 
+          open={openPayments} 
+          handleClose={() => {
+            setOpenPayments(false)
+            setSelectedDebtForPayments(null)
+          }} 
+          debt={selectedDebtForPayments} 
+          contactId={contactId || ''} 
+        />
       </>
     )
 }

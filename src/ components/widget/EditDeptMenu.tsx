@@ -1,23 +1,24 @@
 import { Button, Dialog, MenuItem, TextField } from "@mui/material";
 import { useAtom } from "jotai";
-import { X, Plus } from "lucide-react";
+import { X, Pencil } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { createDeptAtom, type Idebt } from "../../store/debtAtom";
+import { editDeptAtom, type Idebt } from "../../store/debtAtom";
 
 interface Iprops {
     open: boolean;
     handleClose: () => void;
+    debt: Idebt | null;
     contactId: string;
 }
 
-export interface IDeptForm {
-    contact_id: string;
+export interface IEditDeptForm {
     direction: "they_owe_me" | "i_owe_them";
     amount: number;
     currency: string;
     description: string;
     due_date: string;
+    status: "pending" | "partial" | "paid";
 }
 
 const darkInputSx = {
@@ -54,41 +55,47 @@ const selectSlotProps = {
     }
 };
 
-export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops) {
+export default function EditDeptMenu({ open, handleClose, debt, contactId }: Iprops) {
 
-    const [, createDept] = useAtom(createDeptAtom);
+    const [, editDept] = useAtom(editDeptAtom);
 
     const {
         register,
         handleSubmit,
-        reset,
-        setValue
-    } = useForm<IDeptForm>({
+        reset
+    } = useForm<IEditDeptForm>({
         defaultValues: {
-            contact_id: contactId || "",
             direction: "they_owe_me",
             amount: 0,
             currency: "USD",
             description: "",
-            due_date: ""
+            due_date: "",
+            status: "pending"
         }
     });
 
     useEffect(() => {
-        if (contactId) {
-            setValue("contact_id", contactId);
+        if (debt && open) {
+            reset({
+                direction: debt.direction,
+                amount: debt.amount,
+                currency: debt.currency || "USD",
+                description: debt.description || "",
+                due_date: debt.due_date ? debt.due_date.slice(0, 10) : "",
+                status: debt.status || "pending"
+            });
         }
-    }, [contactId, setValue]);
+    }, [debt, open, reset]);
 
-    const submitCreate = async (data: IDeptForm) => {
-        const payload: IDeptForm = {
-            ...data,
-            amount: Number(data.amount),
-            contact_id: contactId
-        };
-        await createDept(payload as unknown as Idebt);
-        handleClose();
-        reset();
+    const submitEdit = async (data: IEditDeptForm) => {
+        if (debt) {
+            const payload = {
+                ...data,
+                amount: Number(data.amount)
+            };
+            await editDept(payload, debt.id, contactId);
+            handleClose();
+        }
     };
 
     return (
@@ -108,13 +115,13 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                 }
             }}
         >
-            <form onSubmit={handleSubmit(submitCreate)} className="p-6 flex flex-col gap-5 w-90 sm:w-115 lg:w-130">
+            <form onSubmit={handleSubmit(submitEdit)} className="p-6 flex flex-col gap-5 w-90 sm:w-115 lg:w-130">
                 <div className="flex justify-between items-center border-b pb-4 border-slate-800">
                     <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
-                            <Plus className="w-5 h-5" />
+                        <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-400">
+                            <Pencil className="w-5 h-5" />
                         </div>
-                        <p className="text-lg font-bold text-white">Создать Новый Долг</p>
+                        <p className="text-lg font-bold text-white">Редактировать Долг</p>
                     </div>
                     <X onClick={handleClose} className="hover:bg-slate-800 text-slate-400 hover:text-white transition-all duration-200 cursor-pointer rounded-xl p-1.5 w-8 h-8" />
                 </div>
@@ -124,7 +131,7 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                         {...register('direction')} 
                         select 
                         label="Кто кому должен" 
-                        defaultValue="they_owe_me"
+                        defaultValue={debt?.direction || "they_owe_me"}
                         sx={darkInputSx}
                         slotProps={selectSlotProps}
                     >
@@ -132,26 +139,39 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                         <MenuItem value="i_owe_them">Я должен</MenuItem>
                     </TextField>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <TextField 
-                            {...register('amount', { valueAsNumber: true })} 
-                            required 
-                            type="number" 
-                            label="Сумма" 
-                            sx={darkInputSx}
-                        />
+                    <TextField 
+                        {...register('amount', { valueAsNumber: true })} 
+                        required 
+                        type="number" 
+                        label="Сумма" 
+                        sx={darkInputSx}
+                    />
 
+                    <div className="grid grid-cols-2 gap-3">
                         <TextField 
                             {...register('currency')} 
                             select 
                             label="Валюта" 
-                            defaultValue="USD"
+                            defaultValue={debt?.currency || "USD"}
                             sx={darkInputSx}
                             slotProps={selectSlotProps}
                         >
                             <MenuItem value="USD">USD</MenuItem>
                             <MenuItem value="RUB">RUB</MenuItem>
                             <MenuItem value="EUR">EUR</MenuItem>
+                        </TextField>
+
+                        <TextField 
+                            {...register('status')} 
+                            select 
+                            label="Статус" 
+                            defaultValue={debt?.status || "pending"}
+                            sx={darkInputSx}
+                            slotProps={selectSlotProps}
+                        >
+                            <MenuItem value="pending">pending (ожидает)</MenuItem>
+                            <MenuItem value="partial">partial (частично)</MenuItem>
+                            <MenuItem value="paid">paid (оплачен)</MenuItem>
                         </TextField>
                     </div>
 
@@ -182,7 +202,7 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                             fontSize: '16px' 
                         }}
                     >
-                        Создать долг
+                        Сохранить изменения
                     </Button>
                 </div>
             </form>

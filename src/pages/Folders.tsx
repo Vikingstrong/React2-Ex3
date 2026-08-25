@@ -6,6 +6,7 @@ import { Button, Menu } from "@mui/material"
 import { EllipsisVertical, Folder, Info, Pencil, Plus, Trash2 } from "lucide-react"
 import React, { useEffect, useState } from "react"
 import CreateFolderMenu from "../ components/widget/CreateFolderMenu"
+import EditFolderMenu from "../ components/widget/EditFolderMenu"
 
 
 export interface Ifolder{
@@ -31,6 +32,8 @@ export default function Folders() {
     }, [])
 
     const [openCreate, setOpenCreate] = useState(false)
+    const [openEdit, setOpenEdit] = useState(false)
+    const [folderToEdit, setFolderToEdit] = useState<Ifolder | null>(null)
 
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -122,7 +125,13 @@ export default function Folders() {
                         }} className="flex items-center gap-3 rounded-lg p-2 text-white cursor-pointer bg-red-800 transition-all hover:bg-red-500 hover:scale-110">
                         <Trash2 />
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg p-2 text-white cursor-pointer bg-orange-600 transition-all hover:bg-orange-400 hover:scale-110">
+                    <div onClick={() => {
+                        if (selectedFolder) {
+                            setFolderToEdit(selectedFolder)
+                            setOpenEdit(true)
+                            setAnchorEl(null)
+                        }
+                    }} className="flex items-center gap-3 rounded-lg p-2 text-white cursor-pointer bg-orange-600 transition-all hover:bg-orange-400 hover:scale-110">
                         <Pencil />
                     </div>
                     <div className="flex items-center gap-3 rounded-lg p-2 text-white cursor-pointer bg-blue-800 transition-all hover:bg-blue-500 hover:scale-110">
@@ -134,6 +143,7 @@ export default function Folders() {
             </Menu>
 
             <CreateFolderMenu open={openCreate} onClose={() => setOpenCreate(false)}/>
+            <EditFolderMenu open={openEdit} onClose={() => { setOpenEdit(false); setFolderToEdit(null); }} folder={folderToEdit}/>
         </>
     )
 }

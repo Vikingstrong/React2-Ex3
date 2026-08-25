@@ -20,7 +20,7 @@ export interface IContactForm{
     folder_id:string;
 }
 
-export default function СreateContactMenu({open, handleClose, folderId}:Iprops) {
+export default function CreateContactMenu({open, handleClose, folderId}:Iprops) {
 
     const [,createContact] = useAtom(createContactAtom)
 

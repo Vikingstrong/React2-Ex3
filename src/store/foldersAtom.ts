@@ -1,7 +1,9 @@
+import { Icontact } from './../pages/FolderInfo';
 import axios from "axios";
 import { atom } from "jotai";
 import type { IContactForm } from "../ components/widget/СreateContactMenu";
 import type { Ifolder } from "../pages/Folders";
+import { axiosRequest } from '../token/token';
 
 const folderApi = 'http://localhost:4000/api/folders'
 const contactsApi = 'http://localhost:4000/api/contacts'
@@ -68,6 +70,14 @@ export const getFolderByIdAtom = atom(null, async(get,set,id) => {
         console.error(error)   
     }
 })
+export const editFolderAtom = atom(null, async (get, set, folder: { name: string; color: string }, id: string) => {
+    try {
+        await axiosRequest.patch(`/folders/${id}`, folder)
+        set(getFoldersAtom)
+    } catch (error) {
+        console.error(error)
+    }
+})
 
 export const getContactsAtom = atom(null, async(get,set,id) => {
     const token = localStorage.getItem('token')
@@ -118,5 +128,18 @@ export const delContactAtom = atom(null, async(get,set,id:string) => {
         })
     } catch (error) {
         console.error(error)
+    }
+})
+export const editContactAtom = atom(null, async(get,set,contact:Icontact, id:string) => {
+    const token = localStorage.getItem('token');
+    try {
+        const resp = await axios.patch(`${contactsApi}/${id}`, contact, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        set(selectedContactAtom, resp.data);
+    } catch (error) {
+        
     }
 })
