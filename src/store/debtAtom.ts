@@ -30,7 +30,7 @@ export const paymentsAtom = atom<IPayment[]>([]);
 
 export const getDeptsAtom = atom(null, async (_, set, contactId: string) => {
     try {
-        const resp = await axiosRequest.get(`/debts?contact_id=${contactId}`);
+        const resp = await axiosRequest.get<Idebt[]>(`/debts?contact_id=${contactId}`);
         set(deptsAtom, resp.data);
     } catch (error) {
         console.error(error);
@@ -39,7 +39,7 @@ export const getDeptsAtom = atom(null, async (_, set, contactId: string) => {
 
 export const getDeptByIdAtom = atom(null, async (_, set, id: string) => {
     try {
-        const resp = await axiosRequest.get(`/debts/${id}`);
+        const resp = await axiosRequest.get<Idebt>(`/debts/${id}`);
         set(selectedDeptAtom, resp.data);
         return resp.data;
     } catch (error) {
@@ -49,7 +49,7 @@ export const getDeptByIdAtom = atom(null, async (_, set, id: string) => {
 
 export const createDeptAtom = atom(null, async (_, set, dept: Partial<Idebt>) => {
     try {
-        await axiosRequest.post('/debts', dept);
+        await axiosRequest.post<Idebt>('/debts', dept);
         if (dept.contact_id) {
             set(getDeptsAtom, dept.contact_id);
         }
@@ -60,7 +60,7 @@ export const createDeptAtom = atom(null, async (_, set, dept: Partial<Idebt>) =>
 
 export const editDeptAtom = atom(null, async (_, set, dept: Partial<Idebt>, id: string, contactId?: string) => {
     try {
-        const resp = await axiosRequest.patch(`/debts/${id}`, dept);
+        const resp = await axiosRequest.patch<Idebt>(`/debts/${id}`, dept);
         set(selectedDeptAtom, resp.data);
         if (contactId) {
             set(getDeptsAtom, contactId);
@@ -83,7 +83,7 @@ export const delDeptAtom = atom(null, async (_, set, id: string, contactId?: str
 
 export const getPaymentsAtom = atom(null, async (_, set, debtId: string) => {
     try {
-        const resp = await axiosRequest.get(`/debts/${debtId}/payments`);
+        const resp = await axiosRequest.get<IPayment[]>(`/debts/${debtId}/payments`);
         set(paymentsAtom, resp.data);
     } catch (error) {
         console.error(error);
@@ -92,7 +92,7 @@ export const getPaymentsAtom = atom(null, async (_, set, debtId: string) => {
 
 export const createPaymentAtom = atom(null, async (_, set, debtId: string, payment: { amount: number; note?: string; paid_at?: string }, contactId?: string) => {
     try {
-        await axiosRequest.post(`/debts/${debtId}/payments`, payment);
+        await axiosRequest.post<IPayment>(`/debts/${debtId}/payments`, payment);
         set(getPaymentsAtom, debtId);
         if (contactId) {
             set(getDeptsAtom, contactId);
