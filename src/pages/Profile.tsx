@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { userProfileAtom, fetchUserAtom, editUserAtom } from "../store/userAtom";
 import { Pencil } from 'lucide-react'
 import { useForm } from "react-hook-form";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 
 interface INewName{
     name: string

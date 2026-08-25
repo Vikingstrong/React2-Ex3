@@ -1,7 +1,7 @@
 import axios from "axios";
 import { atom } from "jotai";
 import type { IContactForm } from "../ components/widget/СreateContactMenu";
-import { Ifolder } from "../pages/Folders";
+import type { Ifolder } from "../pages/Folders";
 
 const folderApi = 'http://localhost:4000/api/folders'
 const contactsApi = 'http://localhost:4000/api/contacts'

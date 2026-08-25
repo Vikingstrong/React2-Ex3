@@ -5,7 +5,7 @@ const apiAuth = 'http://localhost:4000/api/auth'
 
 export const userToken = atom<string|null>(localStorage.getItem('token'))
 
-export const regAtom = atom(null, async(get,set,userData) => {
+export const regAtom = atom(null, async(_,set,userData) => {
     try {
         const resp = await axios.post(`${apiAuth}/register`, userData)
         const { accessToken, refreshToken } = resp.data;

@@ -18,7 +18,7 @@ export interface Idebt {
 }
 
 export const deptsAtom = atom<Idebt[]>([])
-export const getDeptsAtom = atom(null, async(get,set,contactId:string) => {
+export const getDeptsAtom = atom(null, async(_,set,contactId:string) => {
     const token = localStorage.getItem('token')
     try {
         const resp = await axios.get(`${deptsApi}?contact_id=${contactId}`, {
@@ -31,7 +31,7 @@ export const getDeptsAtom = atom(null, async(get,set,contactId:string) => {
         
     }
 })
-export const createDeptAtom = atom(null, async(get,set,dept:Idebt) => {
+export const createDeptAtom = atom(null, async(_,set,dept:Idebt) => {
     const token = localStorage.getItem('token')
     try {
         await axios.post(deptsApi, dept, {
