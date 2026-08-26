@@ -27,9 +27,7 @@ export const loginAtom = atom(null, async (get, set, userData) => {
         const { accessToken, refreshToken } = resp.data;
         if (accessToken) {
             localStorage.setItem('token', accessToken)
-            if (refreshToken) {
-                localStorage.setItem('refreshToken', refreshToken)
-            }
+            localStorage.setItem('refreshToken', refreshToken)
             set(userToken, accessToken)
 
             localStorage.setItem('name', resp.data.user.name)

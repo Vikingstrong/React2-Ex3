@@ -180,7 +180,7 @@ export default function Info() {
         </div>
       </section>
 
-      {/* How It Works Steps */}
+
       <section className="flex flex-col gap-8 p-8 rounded-3xl bg-slate-900/30 border border-slate-800/80">
         <div className="text-center flex flex-col items-center gap-2">
           <h2 className="text-2xl sm:text-3xl font-bold">Как это устроено</h2>

@@ -42,7 +42,6 @@ export default function DebtPaymentsMenu({ open, handleClose, debt, contactId }:
     const [, getPayments] = useAtom(getPaymentsAtom);
     const [, createPayment] = useAtom(createPaymentAtom);
 
-    // Live debt data from Jotai store
     const currentDebt = allDebts.find((d) => d.id === debt?.id) || debt;
 
     const totalPaid = payments.reduce((acc, p) => acc + Number(p.amount || 0), 0);
@@ -108,7 +107,6 @@ export default function DebtPaymentsMenu({ open, handleClose, debt, contactId }:
         >
             <div className="p-6 flex flex-col gap-5 w-90 sm:w-115 lg:w-130 max-h-[85vh] overflow-y-auto">
                 
-                {/* Header */}
                 <div className="flex justify-between items-center border-b pb-4 border-slate-800">
                     <div className="flex items-center gap-3">
                         <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
@@ -126,7 +124,7 @@ export default function DebtPaymentsMenu({ open, handleClose, debt, contactId }:
                     <X onClick={handleClose} className="hover:bg-slate-800 text-slate-400 hover:text-white transition-all duration-200 cursor-pointer rounded-xl p-1.5 w-8 h-8" />
                 </div>
 
-                {/* Balance summary cards */}
+
                 {currentDebt && (
                     <div className="grid grid-cols-3 gap-2 bg-slate-900/80 border border-slate-800 text-white p-3.5 rounded-xl text-center">
                         <div className="flex flex-col">
@@ -144,7 +142,7 @@ export default function DebtPaymentsMenu({ open, handleClose, debt, contactId }:
                     </div>
                 )}
 
-                {/* Form to add payment */}
+
                 <form onSubmit={handleSubmit(submitPayment)} className="flex flex-col gap-3.5 bg-slate-900/40 border border-slate-800/90 p-4.5 rounded-xl">
                     <p className="text-sm font-semibold text-slate-200">Внести оплату</p>
                     <div className="flex flex-col gap-3">
@@ -191,7 +189,7 @@ export default function DebtPaymentsMenu({ open, handleClose, debt, contactId }:
                     </Button>
                 </form>
 
-                {/* Payments list */}
+
                 <div className="flex flex-col gap-3">
                     <p className="text-sm font-semibold text-slate-300">Список выплат:</p>
                     {!payments || payments.length === 0 ? (

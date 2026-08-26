@@ -44,7 +44,7 @@ export default function CreateFolderMenu({ open, onClose }: Props) {
                 <X onClick={() => onClose()} className='hover:bg-gray-200 rounded-2xl p-1 w-8 h-8 transition-all cursor-pointer' />
             </div>
             <div className='flex flex-col gap-5 p-5'>
-                <TextField {...register("name")} label="Name"/>
+                <TextField required {...register("name")} label="Name"/>
                 <div className='flex flex-col gap-5'>
                     <p className='text-sm text-gray-500'>Цвет папки</p>
                     <div className='flex justify-between'>

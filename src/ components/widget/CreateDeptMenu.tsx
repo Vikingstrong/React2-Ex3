@@ -127,6 +127,7 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                         defaultValue="they_owe_me"
                         sx={darkInputSx}
                         slotProps={selectSlotProps}
+                        required
                     >
                         <MenuItem value="they_owe_me">Мне должны</MenuItem>
                         <MenuItem value="i_owe_them">Я должен</MenuItem>
@@ -159,6 +160,7 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                         {...register('description')} 
                         label="Описание" 
                         sx={darkInputSx}
+                        required
                     />
 
                     <TextField 
@@ -167,6 +169,7 @@ export default function CreateDeptMenu({ open, handleClose, contactId }: Iprops)
                         label="Срок оплаты"
                         slotProps={{ inputLabel: { shrink: true } }}
                         sx={darkInputSx}
+                        required
                     />
 
                     <Button 

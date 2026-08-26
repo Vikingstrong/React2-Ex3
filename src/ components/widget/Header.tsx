@@ -11,7 +11,7 @@ export default function Header() {
     return (
       <>
           <header className="flex justify-between gap-5 max-w-300 m-auto py-10 p-5 lg:px-0 items-center">
-              <h1 className="text-4xl font-bold">LOGO</h1>
+              <h1 className="text-4xl font-bold">Debt</h1>
               <nav className="hidden lg:flex gap-10 text-xl">
                   <NavLink to="/">Главная</NavLink>
                   <NavLink to="/folders">Папки</NavLink>
