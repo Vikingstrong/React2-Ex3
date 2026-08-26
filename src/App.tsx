@@ -3,6 +3,7 @@ import Layout from "./Layout/Layout"
 import { lazy } from "react"
 
 const HomePg = lazy(() => import("./pages/Home"))
+const InfoPG = lazy(() => import("./pages/Info"))
 
 const LoginPG = lazy(() => import('./pages/Auth/Login'))
 const RegisterPG = lazy(() => import('./pages/Auth/Register'))
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <HomePg/>
+      },
+      {
+        path: "info",
+        element: <InfoPG/>
       },
       {
         path: "login",
